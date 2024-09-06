@@ -30,5 +30,10 @@ export interface UserMethods {
   generateToken(): void;
 }
 
+export interface TracksHistory {
+  user: string;
+  trackId: string;
+}
+
 
 export type UserModel = Model<UserFields, {}, UserMethods>;
