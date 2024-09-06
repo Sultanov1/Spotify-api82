@@ -10,10 +10,11 @@ albumRouter.get('/', async (req, res, next) => {
     const artistId = req.query.artist as string;
     let albums;
 
-    if (!artistId) {
-      albums = await Album.find();
-    } else {
+    if (artistId) {
       albums = await Album.find({artist: artistId})
+    } else {
+      albums = await Album.find();
+
     }
 
     res.send(albums);
@@ -49,7 +50,7 @@ albumRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
 
     res.send(album);
   } catch (error) {
-    next(error);
+    res.status(500).json({error: 'Internal Server Error!'});
   }
 });
 
