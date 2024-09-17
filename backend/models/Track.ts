@@ -6,9 +6,13 @@ const TrackSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  trackNumber: {
+    type: Number,
+    required: true,
+  },
   album: {
     type: Schema.Types.ObjectId,
-    ref: "Album",
+    ref: 'Album',
     required: true,
     validate: {
       validator: async (value: Types.ObjectId) => {
