@@ -1,10 +1,10 @@
-import {IArtist} from '../types.ts';
+import {Artist} from '../types.ts';
 import {createSlice} from '@reduxjs/toolkit';
 import {fetchArtist} from './artistThunk.ts';
 import {RootState} from './store.ts';
 
 interface artistState {
-  items: IArtist[],
+  items: Artist[],
   isLoading: boolean;
 }
 

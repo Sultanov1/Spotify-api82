@@ -1,8 +1,8 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosApi from '../axiosApi.ts';
-import {IArtist} from '../types.ts';
+import {Artist} from '../types.ts';
 
-export const fetchArtist = createAsyncThunk<IArtist[]>('artist/fetch', async () => {
-  const {data: artist} = await axiosApi.get<IArtist[]>('/artists');
+export const fetchArtist = createAsyncThunk<Artist[]>('artist/fetch', async () => {
+  const {data: artist} = await axiosApi.get<Artist[]>('/artists');
   return artist;
 });
