@@ -12,16 +12,16 @@ const Header = () => {
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            component={Link}
-            to="/"
             sx={{mr: 2, display: {sm: 'none'}}}
           >
             <MenuIcon/>
           </IconButton>
           <Typography
             variant="h6"
-            component="div"
-            sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
+            component={Link}
+            to={'/'}
+            variant="h4"
+            sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}, textDecoration: 'none', color: 'black'}}
           >
             Music App
           </Typography>

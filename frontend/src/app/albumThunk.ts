@@ -16,3 +16,11 @@ export const fetchAlbum = createAsyncThunk<Album[] | undefined, string | undefin
     }
   }
 );
+
+export const fetchAlbumById = createAsyncThunk<Album, string | undefined>(
+  'album/fetchById',
+  async (albumId) => {
+    const response = await axiosApi.get<Album>(`/albums/${albumId}`);
+    return response.data;
+  }
+)

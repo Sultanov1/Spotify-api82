@@ -6,7 +6,7 @@ const TrackSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  trackNumber: {
+  number: {
     type: Number,
     required: true,
   },
@@ -23,7 +23,7 @@ const TrackSchema = new mongoose.Schema({
     }
   },
   duration: String,
-})
+});
 
 const Track = mongoose.model('Track', TrackSchema);
 

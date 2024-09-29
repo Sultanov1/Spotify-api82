@@ -8,7 +8,15 @@ export interface Artist {
 export interface Album {
   _id: string;
   name: string;
-  artist: string;
+  artist: Artist;
   date: number;
   image: string | null
+}
+
+export interface Track {
+  _id: string,
+  name: string,
+  album: string,
+  duration: string,
+  number: number,
 }

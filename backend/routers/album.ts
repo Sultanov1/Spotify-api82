@@ -12,9 +12,9 @@ albumRouter.get('/', async (req, res, next) => {
     let albums;
 
     if (artistId) {
-      albums = await Album.find({artist: artistId})
+      albums = await Album.find({artist: artistId}).sort({date: -1});
     } else {
-      albums = await Album.find();
+      albums = await Album.find().sort({date: -1});
     }
 
     return res.send(albums);
