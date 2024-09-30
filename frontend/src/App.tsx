@@ -4,6 +4,7 @@ import {Container, Typography} from '@mui/material';
 import Album from './containers/Album/Album.tsx';
 import Header from './components/Header.tsx';
 import Track from './containers/Track/Track.tsx';
+import Register from './features/Register.tsx';
 
 const App = () => {
   return (
@@ -17,7 +18,8 @@ const App = () => {
             <Route path="/" element={<Artist/>}/>
             <Route path="/albums/:id" element={<Album/>}/>
             <Route path="/tracks/:id" element={<Track/>} />
-            <Route path="*" element={<Typography variant="h1">Not found</Typography>} />
+            <Route path='/register' element={<Register/>}/>
+            <Route path="*" element={<Typography variant="h4">Not found</Typography>} />
           </Routes>
         </Container>
       </main>

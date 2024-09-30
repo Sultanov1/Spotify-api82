@@ -12,6 +12,14 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    validate: {
+      validator: async (username: string) => {
+        const user = await User.findOne({username: username});
+
+       return !user;
+      },
+      message: 'This User is already registered',
+    }
   },
   password: {
     type: String,
@@ -23,15 +31,15 @@ const UserSchema = new Schema({
   }
 });
 
-UserSchema.methods.checkPassword = function(password: string) {
+UserSchema.methods.checkPassword = function (password: string) {
   return bcrypt.compare(password, this.password);
 };
 
-UserSchema.methods.generateToken = function() {
+UserSchema.methods.generateToken = function () {
   this.token = randomUUID();
 };
 
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
