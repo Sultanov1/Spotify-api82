@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../axiosApi.ts';
-import {Album} from '../types.ts';
+import { Album } from '../types.ts';
 
 
 export const fetchAlbum = createAsyncThunk<Album[] | undefined, string | undefined>(

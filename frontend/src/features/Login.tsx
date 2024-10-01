@@ -1,27 +1,22 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { Alert, Avatar, Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { selectRegisterError } from '../app/userSlice';
-import { RegisterMutation } from '../types';
-import { register } from '../app/userThunk';
-import { Avatar, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { useAppDispatch, useAppSelector } from '../app/hooks.ts';
+import { selectLoginError } from '../app/userSlice.ts';
+import { LoginMutation } from '../types.ts';
+import { login } from '../app/userThunk.ts';
 
-const Register = () => {
+const Login = () => {
   const dispatch = useAppDispatch();
-  const error = useAppSelector(selectRegisterError);
+  const error = useAppSelector(selectLoginError);
   const navigate = useNavigate();
 
-  const [state, setState] = useState<RegisterMutation>({
+  const [state, setState] = useState<LoginMutation>({
     username: '',
     password: '',
   });
-
-  const getFieldError = (fieldName: string) => {
-    if (!error || !error.errors) return undefined;
-    return error.errors[fieldName]?.message;
-  };
 
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -35,10 +30,10 @@ const Register = () => {
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      await dispatch(register(state)).unwrap();
+      await dispatch(login(state)).unwrap();
       navigate('/');
     } catch (e) {
-      console.log(e);
+      console.error('Login failed:', e);
     }
   };
 
@@ -53,11 +48,16 @@ const Register = () => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
+          <LockOpenIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign up
+          Sign in
         </Typography>
+        {error && error.error && (
+          <Alert severity="error" sx={{ mt: 3, width: '100%' }}>
+            {error.error}
+          </Alert>
+        )}
         <Box component="form" onSubmit={submitFormHandler} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -66,9 +66,7 @@ const Register = () => {
                 name="username"
                 value={state.username}
                 onChange={inputChangeHandler}
-                autoComplete="new-username"
-                error={Boolean(getFieldError('username'))}
-                helperText={getFieldError('username')}
+                autoComplete="current-username"
               />
             </Grid>
             <Grid item xs={12}>
@@ -76,11 +74,9 @@ const Register = () => {
                 name="password"
                 label="Password"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 value={state.password}
                 onChange={inputChangeHandler}
-                error={Boolean(getFieldError('password'))}
-                helperText={getFieldError('password')}
               />
             </Grid>
           </Grid>
@@ -90,13 +86,13 @@ const Register = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2, backgroundColor: 'black' }}
           >
-            Sign Up
+            Sign in
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <RouterLink to="/signin" style={{ textDecoration: 'none', color: 'black' }}>
-                Already have an account? Sign in
-              </RouterLink>
+              <Link sx={{ color: 'black' }} component={RouterLink} to="/forgot-password" variant="body2">
+                Forgot your password?
+              </Link>
             </Grid>
           </Grid>
         </Box>
@@ -105,4 +101,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;

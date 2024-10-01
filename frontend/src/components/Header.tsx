@@ -1,62 +1,29 @@
-import { AppBar, Box, Button, CssBaseline, Grid, IconButton, Toolbar, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link, NavLink } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import UserMenu from './UserMenu';
+import AnonymousMenu from './AnonymousMenu';
+import { useAppSelector } from '../app/hooks.ts';
+import { selectUser } from '../app/userSlice.ts';
 
 const Header = () => {
+  const user = useAppSelector(selectUser);
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar component="nav" sx={{ backgroundColor: '#1db954' }}>
-        <Toolbar sx={{ paddingLeft: '10px', paddingRight: '10px' }}>
-          <Grid container alignItems="center">
-            <Grid item xs={1}>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                sx={{ display: { sm: 'none' } }}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Grid>
-
-            <Grid item xs={9} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginLeft: '-70px' }}>
-              <Typography
-                variant="h4"
-                component={Link}
-                to={'/'}
-                sx={{
-                  flexGrow: 1,
-                  textDecoration: 'none',
-                  color: 'black',
-                  display: { xs: 'none', sm: 'block' },
-                }}
-              >
-                Music App
-              </Typography>
-            </Grid>
-
-            <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                <Button
-                  component={NavLink}
-                  to={'/register'}
-                  sx={{ color: '#fff', textDecoration: 'none', fontSize: '16px' }}
-                >
-                  Sign up
-                </Button>
-                <Button
-                  component={NavLink}
-                  to={'/Log'}
-                  sx={{ color: '#fff', textDecoration: 'none', fontSize: '16px' }}
-                >
-                  Sign in
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px',
+        borderBottom: '1px solid black'
+      }}
+    >
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+        <Typography sx={{ color: 'black',fontSize: '30px' }}>Music App</Typography>
+      </Link>
+      <Box>
+        {user ? <UserMenu user={user} /> : <AnonymousMenu />}
+      </Box>
     </Box>
   );
 };

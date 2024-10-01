@@ -5,6 +5,7 @@ import Album from './containers/Album/Album.tsx';
 import Header from './components/Header.tsx';
 import Track from './containers/Track/Track.tsx';
 import Register from './features/Register.tsx';
+import Login from './features/Login.tsx';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/albums/:id" element={<Album/>}/>
             <Route path="/tracks/:id" element={<Track/>} />
             <Route path='/register' element={<Register/>}/>
+            <Route path='/login' element={<Login/>}/>
             <Route path="*" element={<Typography variant="h4">Not found</Typography>} />
           </Routes>
         </Container>
