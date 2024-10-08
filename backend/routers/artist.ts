@@ -23,7 +23,7 @@ artistRouter.get('/:id', async (req, res, next) => {
       res.status(404).json({error: 'Artist not found'});
     }
 
-    return res.status(200).json(artist);
+    return res.send(artist);
   } catch (e) {
     next(e);
   }

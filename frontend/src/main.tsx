@@ -6,6 +6,7 @@ import {ThemeProvider} from '@mui/material';
 import {Provider} from 'react-redux';
 import {persist, store} from './app/store.ts';
 import {PersistGate} from 'redux-persist/integration/react';
+import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <Provider store={store}>

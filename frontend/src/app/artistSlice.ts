@@ -1,18 +1,20 @@
 import {Artist} from '../types.ts';
 import {createSlice} from '@reduxjs/toolkit';
-import {fetchArtist, fetchArtistById} from './artistThunk.ts';
+import {fetchArtist, fetchArtistName} from './artistThunk.ts';
 import {RootState} from './store.ts';
 
 interface artistState {
   items: Artist[],
-  artist: Artist | undefined;
+  artist: Artist | null;
   isLoading: boolean;
+  artistName: string,
 }
 
 const initialState: artistState = {
   items: [],
-  artist: undefined,
+  artist: null,
   isLoading: false,
+  artistName: '',
 }
 
 export const artistSlice = createSlice({
@@ -27,16 +29,23 @@ export const artistSlice = createSlice({
       state.isLoading = false;
       state.items = artists;
     });
-    builder.addCase(fetchArtistById.pending, (state) => {
+    builder.addCase(fetchArtist.rejected, (state) => {
+      state.isLoading = false;
+    })
+    builder.addCase(fetchArtistName.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchArtistById.fulfilled, (state, { payload: artist }) => {
+    builder.addCase(fetchArtistName.fulfilled, (state, { payload: info }) => {
       state.isLoading = false;
-      state.artist = artist;
+      state.artistName = info.artist.name;
+    });
+    builder.addCase(fetchArtistName.rejected, (state) => {
+      state.isLoading = false;
     });
   },
 });
 
 export const artistReducer = artistSlice.reducer;
 export const selectArtists = (state: RootState) => state.artist.items;
+export const selectArtistName = (state: RootState) => state.artist.artistName;
 export const selectArtist = (state: RootState) => state.artist.artist;

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Menu, MenuItem } from '@mui/material';
-import { User } from '../types';
+import {User} from '../types.ts';
+import {persist} from '../app/store.ts';
 
 interface Props {
   user: User;
@@ -17,16 +19,25 @@ const UserMenu: React.FC<Props> = ({user}) => {
     setAnchorEl(null);
   };
 
+
+  const logout = () => {
+    localStorage.removeItem('persist:musicApp:users');
+    persist.purge().then(() => {
+      setAnchorEl(null);
+      window.location.reload();
+    });
+  }
+
   return (
     <>
       <Button color="inherit" onClick={handleClick}>
         Hello, {user.username}!
       </Button>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem>Profile</MenuItem>
-        <MenuItem>My account</MenuItem>
-        <MenuItem>Logout</MenuItem>
-        <MenuItem>TrackHistory</MenuItem>
+        <MenuItem>
+          <Link to={'/track_history'} style={{color: 'black', textDecoration: 'none'}}>Track History</Link>
+        </MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </>
   );

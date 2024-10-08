@@ -1,38 +1,63 @@
 import express from 'express';
-import User from '../models/User';
 import TrackHistory from '../models/TrackHistory';
+import { Error } from 'mongoose';
+import Track from '../models/Track';
+import Album from '../models/Album';
+import Artist from '../models/Artist';
+import auth, {RequestWithUser} from "../middleware/auth";
+import dayjs from "dayjs";
 
 const trackHistoryRouter = express.Router();
 
-trackHistoryRouter.post('/', async (req, res, next) => {
+trackHistoryRouter.post('/', auth, async (req, res, next) => {
   try {
-    const headerValue = req.get('Authorization');
+    const user = (req as RequestWithUser).user;
 
-    if (!headerValue) {
-      return res.status(401).send({error: 'Header "Authorization" not found'});
+    const track = await Track.findOne({ _id: req.body.track });
+
+    if (track) {
+      const album = await Album.findOne({ _id: track.album });
+
+      if (album) {
+        const artist = await Artist.findOne({ _id: album.artist });
+
+        if (artist) {
+          const trackHistory = new TrackHistory({
+            user: user.id,
+            track: req.body.track,
+            trackName: track.name,
+            artist: artist._id,
+            date: dayjs(new Date().toISOString()).format('DD.MM.YYYY HH:mm'),
+          });
+
+          await trackHistory.save();
+          return res.send(trackHistory);
+        }
+      }
     }
 
-    const [_bearer, token] = headerValue.split(' ');
-
-    if (!token) {
-      return res.status(401).send({error: 'Token not found'});
+    if (!track) {
+      return res.status(404).send({ error: 'Track is undefined!' });
     }
-
-    const user = await User.findOne({token});
-
-    if (!user) {
-      return res.status(401).send({error: 'Token not found'});
+  } catch (e) {
+    if (e instanceof Error.ValidationError) {
+      return res.status(400).send(e);
     }
+    return next(e);
+  }
+});
 
-    const trackHistory = new TrackHistory({
-      trackId: req.body.trackId,
-      user: user._id,
-    })
+trackHistoryRouter.get('/', auth, async (req, res, next) => {
+  try {
+    const user = (req as RequestWithUser).user;
 
-    await trackHistory.save();
-    return res.send(trackHistory)
-  } catch (error) {
-    next(error);
+    const tracks = await TrackHistory.find({ user: user._id })
+      .sort({ date: -1 })
+      .populate('artist', 'name');
+    return res.send(tracks);
+  } catch (e){
+    return res.status(500);
+    next(e);
   }
 });
 

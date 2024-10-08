@@ -3,17 +3,10 @@ import axiosApi from '../axiosApi.ts';
 import { Album } from '../types.ts';
 
 
-export const fetchAlbum = createAsyncThunk<Album[] | undefined, string | undefined>(
-  'album/fetchAll',
-  async (artistId) => {
-    try {
-      const response = await axiosApi.get<Album[]>('/albums', {
-        params: { artist: artistId },
-      });
+export const fetchAlbums = createAsyncThunk<Album[] ,string>(
+  'album/fetchAlbums', async (id: string) => {
+      const response = await axiosApi.get<Album[]>(`/albums?artist=${id}`);
       return response.data;
-    } catch (error) {
-      console.error(error);
-    }
   }
 );
 
@@ -23,4 +16,9 @@ export const fetchAlbumById = createAsyncThunk<Album, string | undefined>(
     const response = await axiosApi.get<Album>(`/albums/${albumId}`);
     return response.data;
   }
-)
+);
+
+export const fetchAllAlbums = createAsyncThunk<Album[]>('albums/fetchAllAlbums', async () => {
+  const response = await axiosApi.get<Album[]>('albums');
+  return response.data;
+});

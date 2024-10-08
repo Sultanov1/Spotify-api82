@@ -1,27 +1,29 @@
 import express from 'express';
 import Album from '../models/Album';
-import {AlbumMutation} from '../types';
 import {imagesUpload} from '../multer';
 import mongoose from 'mongoose';
+import auth from '../middleware/auth';
 
 const albumRouter = express.Router();
 
 albumRouter.get('/', async (req, res, next) => {
   try {
-    const artistId = req.query.artist as string;
-    let albums;
+    const artist = req.query.artist as string;
 
-    if (artistId) {
-      albums = await Album.find({artist: artistId}).sort({date: -1});
-    } else {
-      albums = await Album.find().sort({date: -1});
+    if (!artist) {
+     const albums = await Album.find().populate('artist', 'name');
+     return res.send(albums);
     }
+
+    const albums = await Album.find({ artist, isPublished: true })
+      .sort({ date: -1 })
+      .populate('artist', 'name');
 
     return res.send(albums);
   } catch (error) {
     next(error);
   }
-})
+});
 
 albumRouter.get('/:id', async (req, res, next) => {
   try {
@@ -37,19 +39,18 @@ albumRouter.get('/:id', async (req, res, next) => {
   }
 })
 
-albumRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
+albumRouter.post('/', auth, imagesUpload.single('image'), async (req, res, next) => {
   try {
-    const albumData: AlbumMutation = {
+    const albumData = new Album ({
       name: req.body.name,
       artist: req.body.artist,
       date: req.body.date,
       image: req.file ? 'images/' + req.file.filename : null,
-    };
+    });
 
-    const album = new Album(albumData);
-    await album.save();
+    await albumData.save();
 
-    return res.send(album);
+    return res.send(albumData);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send(error);

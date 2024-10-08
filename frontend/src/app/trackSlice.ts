@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchTrack } from './trackThunk.ts';
 import { RootState } from './store.ts';
 import { Track } from '../types.ts';
+import {fetchTracks} from './trackThunk.ts';
 
 interface TrackState {
-  items: Track[] | undefined,
+  items: Track[],
   fetchLoading: boolean,
 }
 
@@ -13,23 +13,24 @@ const initialState: TrackState = {
   fetchLoading: false,
 };
 
-export const trackSlice = createSlice({
-  name: 'track',
+export const tracksSlice = createSlice({
+  name: 'tracks',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchTrack.pending, (state) => {
+    builder.addCase(fetchTracks.pending, (state) => {
       state.fetchLoading = true;
-    })
-      .addCase(fetchTrack.fulfilled, (state, {payload}) => {
+    });
+    builder.addCase(fetchTracks.fulfilled, (state, { payload: tracks }) => {
       state.fetchLoading = false;
-      state.items = payload;
-    })
-      .addCase(fetchTrack.rejected, (state) => {
-        state.fetchLoading = false;
-      })
+      state.items = tracks;
+    });
+    builder.addCase(fetchTracks.rejected, (state) => {
+      state.fetchLoading = false;
+    });
   },
 });
 
-export const trackReducer = trackSlice.reducer;
-export const selectTrack = (state: RootState) => state.track.items;
+export const trackReducer = tracksSlice.reducer;
+export const selectTrack = (state: RootState) => state.tracks.items;
+export const isLoading = (state: RootState) => state.tracks.fetchLoading;

@@ -6,6 +6,7 @@ import {usersReducer} from './userSlice.ts';
 import {FLUSH, persistReducer, persistStore} from 'redux-persist';
 import {PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE} from 'redux-persist/es/constants';
 import storage from 'redux-persist/lib/storage';
+import {trackHistoryReducer} from './trackHistorySlice.ts';
 
 const userPersistConfig = {
   key: 'store:users',
@@ -16,7 +17,8 @@ const userPersistConfig = {
 const rootReducer = combineReducers({
   artist: artistReducer,
   album: albumReducer,
-  track: trackReducer,
+  tracks: trackReducer,
+  histories: trackHistoryReducer,
   users: persistReducer(userPersistConfig, usersReducer),
 })
 

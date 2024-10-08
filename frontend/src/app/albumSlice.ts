@@ -1,17 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import {fetchAlbum, fetchAlbumById} from './albumThunk.ts';
+import {fetchAlbums, fetchAllAlbums} from './albumThunk.ts';
 import { Album } from '../types.ts';
 
 interface AlbumState {
-  items: Album[] | undefined;
-  album: Album | undefined;
+  items: Album[];
   fetchLoading: boolean;
 }
 
 const initialState: AlbumState = {
   items: [],
-  album: undefined,
   fetchLoading: false,
 };
 
@@ -20,24 +18,30 @@ export const albumSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchAlbum.pending, (state) => {
+    builder.addCase(fetchAlbums.pending, (state) => {
       state.fetchLoading = true;
     });
-    builder.addCase(fetchAlbum.fulfilled, (state, {payload: albums}) => {
+    builder.addCase(fetchAlbums.fulfilled, (state, {payload: albums}) => {
       state.fetchLoading = false;
       state.items = albums;
     });
-    builder.addCase(fetchAlbumById.pending, (state) => {
+    builder.addCase(fetchAlbums.rejected, (state) => {
+      state.fetchLoading = false;
+    });
+    builder.addCase(fetchAllAlbums.pending, (state) => {
       state.fetchLoading = true;
     });
-    builder.addCase(fetchAlbumById.fulfilled, (state, { payload: album }) => {
+    builder.addCase(fetchAllAlbums.fulfilled, (state, { payload: albums }) => {
       state.fetchLoading = false;
-      state.album = album;
+      state.items = albums;
+    });
+    builder.addCase(fetchAllAlbums.rejected, (state) => {
+      state.fetchLoading = false;
     });
   },
 });
 
 export const albumReducer = albumSlice.reducer;
 export const selectAlbums = (state: RootState) => state.album.items;
-export const selectAlbum = (state: RootState) => state.album.album;
+export const isLoading = (state: RootState) => state.album.fetchLoading;
 

@@ -1,36 +1,50 @@
-import mongoose, {model, Types} from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import User from './User';
-import {TracksHistory} from '../types';
-
-const Schema = mongoose.Schema;
+import Track from './Track';
+import Artist from './Artist';
+import { TracksHistory } from '../types';
 
 const TrackHistorySchema = new Schema({
-  userId: {
+  track: {
     type: Schema.Types.ObjectId,
+    ref: 'Track',
     required: true,
     validate: {
-      validator: async (value: Types.ObjectId) => {
+      validator: async (value: Types.ObjectId): Promise<boolean> => {
+        const track = await Track.findById(value);
+        return !!track;
+      },
+      message: 'Track does not exist!',
+    },
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    validate: {
+      validator: async (value: Types.ObjectId): Promise<boolean> => {
         const user = await User.findById(value);
-        return Boolean(user);
+        return !!user;
       },
       message: 'User does not exist!',
-    }
+    },
   },
-  trackId: {
+  artist: {
     type: Schema.Types.ObjectId,
+    ref: 'Artist',
     required: true,
     validate: {
-      validator: async (value: Types.ObjectId) => {
-        const track = await User.findById(value);
-        return Boolean(track);
+      validator: async (value: Types.ObjectId): Promise<boolean> => {
+        const artist = await Artist.findById(value);
+        return !!artist;
       },
-      message: 'Track does not exist',
-    }
+      message: 'Artist does not exist!',
+    },
   },
-  datetime: {
-    type: Date,
-    default: () => new Date,
-  }
+  date: {
+    type: String,
+    required: true,
+  },
 });
 
 const TrackHistory = model<TracksHistory>('TrackHistory', TrackHistorySchema);

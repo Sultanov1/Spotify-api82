@@ -17,8 +17,23 @@ export interface Track {
   _id: string,
   name: string,
   album: string,
+  artist: string;
   duration: string,
   number: number,
+}
+
+export interface TrackHistoryMutation {
+  track: string;
+}
+
+export interface TracksHistory {
+  _id: string;
+  trackName: string;
+  artist: {
+    name: string;
+    _id: string;
+  };
+  date: string;
 }
 
 export interface RegisterMutation {

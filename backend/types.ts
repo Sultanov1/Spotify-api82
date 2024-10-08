@@ -1,5 +1,11 @@
 import {Model} from 'mongoose';
 
+export interface UserMutation {
+  username: string;
+  password: string;
+  token: string;
+}
+
 export interface ArtistMutation {
     name: string;
     image: string | null;
@@ -24,6 +30,7 @@ export interface UserFields {
   username: string;
   password: string;
   token: string;
+  role: string;
 }
 
 export interface UserMethods {
@@ -33,7 +40,8 @@ export interface UserMethods {
 
 export interface TracksHistory {
   user: string;
-  trackId: string;
+  trackID: string;
+  artist: string,
 }
 
 

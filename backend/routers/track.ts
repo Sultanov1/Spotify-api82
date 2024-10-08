@@ -1,63 +1,49 @@
 import express from "express";
-import {imagesUpload} from "../multer";
 import Track from "../models/Track";
-import Album from "../models/Album";
-import {TrackMutation} from '../types';
+import auth from '../middleware/auth';
+import mongoose from 'mongoose';
 
 const trackRouter = express.Router();
 
 trackRouter.get('/', async (req, res, next) => {
   try {
-    const artistId = req.query.artist;
+    const album = req.query.album as string;
 
-    if (artistId) {
-      const albums = await Album.find({ artist: artistId });
-      const albumIds = albums.map(album => album._id);
-      const tracks = await Track.find({ album: albumIds });
-      res.send(tracks);
-    } else {
-      const tracks = await Track.find();
-      res.send(tracks);
+    if (!album) {
+      const tracks = await Track.find({isPublished: true}).populate('album', 'name');
+      return res.send(tracks);
     }
+
+    const tracks = await Track.find({
+      album: { _id: album },
+      isPublished: true,
+    })
+      .sort({ number: 1 })
+      .populate('album', 'name');
+
+    return res.send(tracks);
   } catch (error) {
     next(error);
   }
 });
 
-trackRouter.get('/:albumId', async (req, res) => {
+trackRouter.post('/', auth, async (req, res, next) => {
   try {
-    const albumId = req.params.albumId;
-
-    const tracks = await Track.find({album: albumId}).sort({number: 1 });
-
-    res.send(tracks);
-  } catch (e) {
-    res.status(500).send({e: 'Internal server error'});
-  }
-})
-
-trackRouter.post('/', imagesUpload.single('image'),async (req, res, next) => {
-  try {
-    const existingTrack = await Track.findOne({trackNumber: req.body.trackNumber, album: req.body.album});
-
-    if (!existingTrack) {
-      return res.status(400).json({error: 'Track with this number does not exists'});
-    }
-
-
-    const albumData: TrackMutation = {
+    const trackData = new Track ({
       name: req.body.name,
-      album: req.body.album,
       duration: req.body.duration,
+      album: req.body.album,
       number: req.body.number,
-    };
+    });
 
-    const track = new Track(albumData);
-    await track.save();
+    await trackData.save();
 
-    res.send(track);
-  } catch (e) {
-    next(e);
+    return res.send(trackData);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+    next(error);
   }
 });
 

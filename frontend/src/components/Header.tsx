@@ -14,12 +14,12 @@ const Header = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '10px',
-        borderBottom: '1px solid black'
+        padding: '10px 30px',
+        background: '#1db954'
       }}
     >
       <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-        <Typography sx={{ color: 'black',fontSize: '30px' }}>Music App</Typography>
+        <Typography sx={{ color: 'white',fontSize: '30px' }}>Music App</Typography>
       </Link>
       <Box>
         {user ? <UserMenu user={user} /> : <AnonymousMenu />}
